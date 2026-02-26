@@ -1,0 +1,60 @@
+---
+title: "Homework 4"
+author: "Gianna Solano"
+date: "2026-02-18"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, include=FALSE}
+library(tidyverse)
+census <- read.csv("census.csv")
+```
+
+```{r}
+head(census)
+```
+
+categorical: state, postal_code, region, division
+quantitative: year, population, land_area
+
+```{r}
+census <- census %>%
+  arrange(region, year, desc(population))
+head(census)
+
+census <- census %>% 
+  select(-postal_code)
+head(census)
+
+census <- census %>%
+  mutate(density = population/land_area)
+head(census)
+
+census <- census %>%
+  mutate(is_large = land_area > 2000000)
+head(census)
+
+census <- filter(census, year == 2015)
+head(census)
+
+ census %>%
+  group_by(region) %>%
+  summarize(total_pop = sum(population))
+```
+
+The South has the highest summed population in 2015.
+
+```{r}
+print(
+  census %>%
+    filter(region == "West") %>%
+    group_by(division) %>%
+    summarize(density_per_division = mean(density))
+)
+```
+
+
