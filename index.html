@@ -1,0 +1,91 @@
+---
+title: "Project 1"
+author: "Gianna Solano"
+date: "2026-02-26"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+test <- read.csv("test.csv")
+```
+
+https://www.kaggle.com/datasets/emirhanai/social-media-usage-and-emotional-well-being
+
+This study collects information on social media usage and the overall emotional well-being of users. Each observation represents a social media user. 
+The variables are:
+
+User_ID: Unique identifier for the user
+
+Age: Age of the user
+
+Gender: Gender of the user (Female, Male, Non-binary)
+
+Platform: Social media platform used (e.g., Instagram, Twitter, Facebook, LinkedIn, Snapchat, Whatsapp, Telegram)
+
+Daily_Usage_Time (minutes): Daily time spent on the platform in minutes
+
+Posts_Per_Day: Number of posts made per day
+
+Likes_Received_Per_Day: Number of likes received per day
+
+Comments_Received_Per_Day: Number of comments received per day
+
+Messages_Sent_Per_Day: Number of messages sent per day
+
+Dominant_Emotion: User's dominant emotional state during the day (e.g., Happiness, Sadness, Anger, Anxiety, Boredom, Neutral)
+
+We wanted to study this data set because social media is used by majority of the population, specifically the age group we are in, and it is important to understand the effects it has on us and our emotions as the overall usage continue to increase over time. 
+
+```{r}
+sapply(test, mean)
+sapply(test, median)
+sapply(test, min)
+sapply(test, max)
+sapply(test, sd)
+sapply(test, var)
+
+
+plot1 <- ggplot(test, aes(x = Age, y = Messages_Sent_Per_Day)) + geom_point()
+
+
+plot2 <- ggplot(test, aes(x = Platform, y = Daily_Usage_Time..minutes.)) + geom_point()
+plot1
+plot2
+```
+
+Plot1 has a roughly normal distribution with ages 27-31 sending the most messages 
+
+In plot2, Instagram has the most highest daily usage compared to other amounts
+
+```{r}
+socialmedia <- mutate(test, total_interaction = Likes_Received_Per_Day + Comments_Received_Per_Day + Messages_Sent_Per_Day)
+
+ggplot(socialmedia, aes(x = Dominant_Emotion, y = total_interaction)) + geom_point()
+
+```
+
+This graph allows me to see how all the aspects of social media affect the subject's emotions. 
+
+```{r}
+cor.test(test$Posts_Per_Day, test$Likes_Received_Per_Day, method = "pearson")
+```
+
+This Pearson test show a very strong positive linear relationship with an r-value of 0.925, p-value that is less than 2.2e-16, and a 95% confidence interval of (0.892,0.949). The p-value is less than 0.05 meaning we can reject the null hypothesis and the correlation is statistically significant. 
+
+```{r}
+plot3 <- ggplot(test, aes(x = Posts_Per_Day, y = Likes_Received_Per_Day)) + geom_point() + geom_smooth()
+```
+
+plot3 shows the relationship from the correlation test. The line slopes upward meaning that as the subjects posted more, they received more likes. The variables have a very strong positive relationship.
+
+```{r}
+genders <- filter(test, Gender %in% c("Female", "Male"))
+t.test(Posts_Per_Day ~ Gender, data = genders)
+```
+
+The two sample t-test shows that there is a statistically significant difference between genders. Mean posts for females is 4.04 and for males is 2.63. The difference in means is 1.41, meaning that females post on average 1.4 more posts per day than males. The p-value is 0.00213 and it is less than 0.05 meaning that we can reject the null hypothesis. 
+
+Conclusion: 
+
